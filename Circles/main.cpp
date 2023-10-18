@@ -22,7 +22,7 @@ int main()
 
 	srand(time(NULL));
 
-	const int numCircles = 10;
+	const int numCircles = 20;
 	int posx[numCircles];
 	int posy[numCircles];
 	int dirx[numCircles];
@@ -35,7 +35,7 @@ int main()
 		posy[i] = rand() % gScreenHeight - 22 + 1;
 		dirx[i] = rand() % 8 + 1;
 		diry[i] = rand() % 8 + 1;
-		size[i] = rand() % 30 + 5;
+		size[i] = rand() % 15 + 10;
 		cols[i][0] = rand() % 255 + 1;
 		cols[i][1] = rand() % 255 + 1;
 		cols[i][2] = rand() % 255 + 1;
@@ -45,11 +45,11 @@ int main()
 
 	while(UpdateFramework())
 	{
-		for (int a = 0; a < numCircles; a++) {
+		for (int a = 0; a < numCircles; a++) {  // Collision between circles
 			for (int b = a + 1; b < numCircles; b++) {
 				float distx = posx[a] - posx[b];
 				float disty = posy[a] - posy[b];
-				float dist = distx * distx + disty * disty;
+				float dist = distx * distx + disty * disty;  // Use pythagorus theorum
 
 				float collision = size[a] + size[b];
 				collision *= collision;  // Calculate collision^2 rather than sqrt(dist) as faster
@@ -63,13 +63,13 @@ int main()
 			}
 		}
 
-		// Draws a circles
-		for (int i = 0; i < numCircles; i++) {
+		for (int i = 0; i < numCircles; i++) {  // Draw circles
 			ChangeColour(cols[i][0], cols[i][1], cols[i][2]);
 			DrawCircle(posx[i], posy[i], size[i]);
 			posx[i] += dirx[i];
 			posy[i] += diry[i];
-			if (posx[i] <= 0) {
+
+			if (posx[i] <= 0) {  // Bounce off edges of the screen
 				posx[i] = 0;
 				dirx[i] = -dirx[i];
 			}
