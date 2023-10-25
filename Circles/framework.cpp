@@ -5,12 +5,13 @@
 #include <memory>
 #include <chrono>
 #include <thread>
+#include "Framework.h"
 
 extern int gScreenWidth;
 extern int gScreenHeight;
 
 sf::RenderWindow gWindow(sf::VideoMode(gScreenWidth, gScreenHeight), "C++ Framework");
-sf::CircleShape gCircleShape(20, 64);
+sf::CircleShape gCircleShape(20);
 
 extern int x;
 extern int y;
@@ -63,7 +64,7 @@ bool UpdateFramework()
 }
 
 void ChangeColour(unsigned char red, unsigned char green, 
-	unsigned char blue, unsigned char alpha = 255)
+	unsigned char blue, unsigned char alpha)
 {
 	gCircleShape.setFillColor({ red,green,blue,alpha });
 }
@@ -76,3 +77,28 @@ void DrawCircle(int x,int y, int radius)
     gWindow.draw(gCircleShape);
 }
 
+void GetMousePosition(int &x, int &y)
+{
+	sf::Vector2i position = sf::Mouse::getPosition(gWindow);
+
+	x = position.x;
+	y = position.y;
+}
+
+bool IsButtonPressed(EButton whichButton)
+{
+	switch (whichButton)
+	{
+	case EButton::eLeft:
+		return sf::Mouse::isButtonPressed(sf::Mouse::Left);
+	case EButton::eRight:
+		return sf::Mouse::isButtonPressed(sf::Mouse::Right);
+	case EButton::eMiddle:
+		return sf::Mouse::isButtonPressed(sf::Mouse::Middle);
+	default:
+		std::cerr << "unknown button" << std::endl;
+		break;
+	}
+
+	return false;
+}

@@ -3,13 +3,14 @@
 */
 
 #include <iostream>
+#include <vector>
 #include "Framework.h"
 
 // Variables with global scope - do not rename them, feel free to change values though
 
 // Screen dimensions
-int gScreenWidth{1000};
-int gScreenHeight{1000};
+int gScreenWidth{1800};
+int gScreenHeight{990};
 
 // Delay to slow things down
 int gTimeDelayMS{10};
@@ -19,73 +20,102 @@ using namespace std;
 int main()
 {
 	cout << "Hello circles" << endl;
+	srand(time(NULL));  // Random seed set to time
 
-	srand(time(NULL));
+	int numCircles = 20; // Number of circles
+	bool collisionEnabled = true;  // Enable collision
+	struct Circle {  // Circle type
+		int pos[2];
+		int dir[2];
+		int size;
+		unsigned char colour[4];
+		bool move;
+	};
 
-	const int numCircles = 20;
-	int posx[numCircles];
-	int posy[numCircles];
-	int dirx[numCircles];
-	int diry[numCircles];
-	int size[numCircles];
-	unsigned char cols[numCircles][4];
+	vector<Circle> Circles;  // Create empty vector of circles
+	Circles.resize(numCircles);
 
-	for (int i = 0; i < numCircles; i++) {
-		posx[i] = rand() % gScreenWidth - 22 + 1;
-		posy[i] = rand() % gScreenHeight - 22 + 1;
-		dirx[i] = rand() % 8 + 1;
-		diry[i] = rand() % 8 + 1;
-		size[i] = rand() % 15 + 10;
-		cols[i][0] = rand() % 255 + 1;
-		cols[i][1] = rand() % 255 + 1;
-		cols[i][2] = rand() % 255 + 1;
-		cols[i][3] = rand() % 255 + 10;
+	for (int i = 0; i < Circles.size(); i++) {  // Fill vector with randomised circles
+		Circles[i].pos[0] = rand() % gScreenWidth - 22 + 1;
+		Circles[i].pos[1] = rand() % gScreenHeight - 22 + 1;
+		Circles[i].dir[0] = rand() % 8 + 1;
+		Circles[i].dir[1] = rand() % 8 + 1;
+		Circles[i].size = rand() % 15 + 10;
+		Circles[i].colour[0] = rand() % 255 + 1;
+		Circles[i].colour[1] = rand() % 255 + 1;
+		Circles[i].colour[2] = rand() % 255 + 1;
+		Circles[i].colour[3] = 255; // rand() % 255 + 10;
+		Circles[i].move = true;
 	}
 	
 
 	while(UpdateFramework())
 	{
-		for (int a = 0; a < numCircles; a++) {  // Collision between circles
-			for (int b = a + 1; b < numCircles; b++) {
-				float distx = posx[a] - posx[b];
-				float disty = posy[a] - posy[b];
-				float dist = distx * distx + disty * disty;  // Use pythagorus theorum
-
-				float collision = size[a] + size[b];
-				collision *= collision;  // Calculate collision^2 rather than sqrt(dist) as faster
-
-				if (dist < collision) {
-					dirx[a] = -dirx[a];
-					dirx[b] = -dirx[b];
-					diry[a] = -diry[a];
-					diry[b] = -diry[b];
-				}
-			}
+		if (IsButtonPressed(EButton::eRight)) {  // Add circle on right click
+			Circle newCircle;
+			newCircle.pos[0] = rand() % gScreenWidth - 22 + 1;
+			newCircle.pos[1] = rand() % gScreenHeight - 22 + 1;
+			newCircle.dir[0] = rand() % 8 + 1;
+			newCircle.dir[1] = rand() % 8 + 1;
+			newCircle.size = rand() % 15 + 10;
+			newCircle.colour[0] = rand() % 255 + 1;
+			newCircle.colour[1] = rand() % 255 + 1;
+			newCircle.colour[2] = rand() % 255 + 1;
+			newCircle.colour[3] = 255; // rand() % 255 + 10;
+			newCircle.move = true;
+			cout << "Added a new circle." << endl;
+			numCircles += 1;  // Add to Circles
+			Circles.push_back(newCircle);
+		}
+		if (IsButtonPressed(EButton::eMiddle)) {
+			collisionEnabled = !collisionEnabled;
+			cout << "Toggled collision." << endl;
 		}
 
-		for (int i = 0; i < numCircles; i++) {  // Draw circles
-			ChangeColour(cols[i][0], cols[i][1], cols[i][2]);
-			DrawCircle(posx[i], posy[i], size[i]);
-			posx[i] += dirx[i];
-			posy[i] += diry[i];
+		for (int i = 0; i < numCircles; i++) {
+			if (Circles[i].move) {  // Move circles
+				Circles[i].pos[0] += Circles[i].dir[0];
+				Circles[i].pos[1] += Circles[i].dir[1];
 
-			if (posx[i] <= 0) {  // Bounce off edges of the screen
-				posx[i] = 0;
-				dirx[i] = -dirx[i];
-			}
-			else if (posx[i] >= gScreenWidth - (size[i] * 2)) {
-				posx[i] = gScreenWidth - (size[i] * 2);
-				dirx[i] = -dirx[i];
+				if (Circles[i].pos[0] <= 0) {  // Bounce off edges of the screen
+					Circles[i].pos[0] = 0;
+					Circles[i].dir[0] = -Circles[i].dir[0];
+				}
+				else if (Circles[i].pos[0] >= gScreenWidth - (Circles[i].size * 2)) {
+					Circles[i].pos[0] = gScreenWidth - (Circles[i].size * 2);
+					Circles[i].dir[0] = -Circles[i].dir[0];
+				}
+
+				if (Circles[i].pos[1] <= 0) {
+					Circles[i].pos[1] = 0;
+					Circles[i].dir[1] = -Circles[i].dir[1];
+				}
+				else if (Circles[i].pos[1] >= gScreenHeight - (Circles[i].size * 2)) {
+					Circles[i].pos[1] = gScreenHeight - (Circles[i].size * 2);
+					Circles[i].dir[1] = -Circles[i].dir[1];
+				}
 			}
 
-			if (posy[i] <= 0) {
-				posy[i] = 0;
-				diry[i] = -diry[i];
+			if (collisionEnabled) {
+				for (int b = i + 1; b < numCircles; b++) {  // Collision between circles
+					float distx = Circles[i].pos[0] - Circles[b].pos[0];
+					float disty = Circles[i].pos[1] - Circles[b].pos[1];
+					float dist = distx * distx + disty * disty;  // Use pythagorus theorum
+
+					float collision = Circles[i].size + Circles[b].size;
+					collision *= collision;  // Calculate collision^2 rather than sqrt(dist) as faster
+
+					if (dist < collision) {
+						Circles[i].dir[0] = -Circles[i].dir[0];
+						Circles[i].dir[1] = -Circles[i].dir[1];
+						Circles[b].dir[0] = -Circles[b].dir[0];
+						Circles[b].dir[1] = -Circles[b].dir[1];
+					}
+				}
 			}
-			else if (posy[i] >= gScreenHeight - (size[i] * 2)) {
-				posy[i] = gScreenWidth - (size[i] * 2);
-				diry[i] = -diry[i];
-			}
+
+			ChangeColour(Circles[i].colour[0], Circles[i].colour[1], Circles[i].colour[2], Circles[i].colour[3]);  // Draw circles
+			DrawCircle(Circles[i].pos[0], Circles[i].pos[1], Circles[i].size);
 		}
 	}
 
