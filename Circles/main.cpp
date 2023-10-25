@@ -71,6 +71,11 @@ int main()
 			collisionEnabled = !collisionEnabled;
 			cout << "Toggled collision." << endl;
 		}
+		if (IsButtonPressed(EButton::eLeft) && numCircles >= 1) {
+			numCircles -= 1;  // Remove a circle
+			Circles.pop_back();
+			cout << "Removed a circle." << endl;
+		}
 
 		for (int i = 0; i < numCircles; i++) {
 			if (Circles[i].move) {  // Move circles
