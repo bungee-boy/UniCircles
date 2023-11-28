@@ -46,7 +46,7 @@ int main()
 			}
 		}
 
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {  // Right click
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && numCircles > 0) {  // Right click
 			numCircles -= 1;  // Remove circle
 			Circles.pop_back();
 			cout << "Removed a circle." << endl;
@@ -55,7 +55,7 @@ int main()
 			gCollision = !gCollision;  // Toggle collision
 			cout << "Toggled collision." << endl;
 		}
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Middle) && numCircles >= 1) {  // Left click
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && numCircles >= 1) {  // Left click
 			Circles.push_back(Circle());  // Add circle
 			numCircles += 1;
 			cout << "Added a new circle." << endl;
