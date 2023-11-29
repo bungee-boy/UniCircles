@@ -16,6 +16,15 @@ Circle::Circle() {  // Circle constructor
 	size = rand() % 15 + 10;
 }
 
+Pos Circle::getPos() { return pos; }
+void Circle::setPos(Pos newPos) { pos = newPos; }
+
+Pos Circle::getDir() { return dir; }
+void Circle::setDir(Pos newDir) { dir = newDir; }
+
+int Circle::getSize() { return size; }
+void Circle::setSize(int newSize) { size = newSize; }
+
 void Circle::Move() {  // Circle move
 	pos.x += dir.x;
 	pos.y += dir.y;
@@ -49,15 +58,17 @@ void Circle::Draw(sf::RenderWindow& window) {  // Circle draw
 
 void Collide(Circle& a, Circle& b) {  // Collision between circles
 	F_Pos dist;
-	dist.x = a.pos.x - b.pos.x;
-	dist.y = a.pos.y - b.pos.y;
+	dist.x = a.getPos().x - b.getPos().x;
+	dist.y = a.getPos().y - b.getPos().y;
 	float totalDist = dist.x * dist.x + dist.y * dist.y;  // Use pythagorus theorum
 
-	float collision = a.size + b.size;
+	float collision = a.getSize() + b.getSize();
 	collision *= collision;  // Calculate collision^2 rather than sqrt(dist) as faster
 
 	if (totalDist < collision) {
-		a.dir.x = -a.dir.x, a.dir.y = -a.dir.y;
-		b.dir.x = -b.dir.x, b.dir.y = -b.dir.y;
+		Pos newDirA = { -a.getDir().x, -a.getDir().y };
+		Pos newDirB = { -b.getDir().x, -b.getDir().y };
+		a.setDir(newDirA);
+		b.setDir(newDirB);
 	}
 }
