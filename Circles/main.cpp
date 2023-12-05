@@ -37,7 +37,7 @@ int main()
 	txtControlTitle.setColor(colWhite);  // Set font colour
 	txtControlTitle.setPosition(0, 0);  // Set font position
 	// Controls
-	sf::Text txtControls("Increase: [LMB]\nDecrease: [RMB]\nToggle collision: [MMB]\nSpeed: [MWheel]", basicFont, 20);
+	sf::Text txtControls("Increase: [LMB]\nDecrease: [RMB]\nToggle collision: [MMB]\nSpeed: [Scroll]", basicFont, 20);
 	txtControls.setColor(colGrey);
 	txtControls.setPosition(0, 35);
 	// Stats title
