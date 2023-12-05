@@ -4,13 +4,13 @@
 
 using namespace std;
 
-extern int gScreenWidth;
-extern int gScreenHeight;
+extern int gWidth;
+extern int gHeight;
 
 
 Circle::Circle() {  // Circle constructor
-	pos.x = rand() % gScreenWidth - 22 + 1;
-	pos.y = rand() % gScreenHeight - 22 + 1;
+	pos.x = rand() % gWidth - 22 + 1;
+	pos.y = rand() % gHeight - 22 + 1;
 	dir.x = rand() % 8 + 1;
 	dir.y = rand() % 8 + 1;
 	size = rand() % 15 + 10;
@@ -33,8 +33,8 @@ void Circle::Move() {  // Circle move
 		pos.x = 0;
 		dir.x = -dir.x;
 	}
-	else if (pos.x >= gScreenWidth - (size * 2)) {
-		pos.x = gScreenWidth - (size * 2);
+	else if (pos.x >= gWidth - (size * 2)) {
+		pos.x = gWidth - (size * 2);
 		dir.x = -dir.x;
 	}
 
@@ -42,8 +42,8 @@ void Circle::Move() {  // Circle move
 		pos.y = 0;
 		dir.y = -dir.y;
 	}
-	else if (pos.y >= gScreenHeight - (size * 2)) {
-		pos.y = gScreenHeight - (size * 2);
+	else if (pos.y >= gHeight - (size * 2)) {
+		pos.y = gHeight - (size * 2);
 		dir.y = -dir.y;
 	}
 }

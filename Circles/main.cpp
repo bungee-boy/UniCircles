@@ -8,39 +8,57 @@
 #include "circle.h"
 #include "main.h"
 
-using namespace std;  // Namespaces
+using namespace std;  // Include namespaces
 using namespace std::this_thread;
 using namespace std::chrono;
 
-int gScreenWidth{ 1800 };  // Screen dimensions
-int gScreenHeight{ 990 };
-int gTimeDelayMS{ 10 };  // Delay to slow things down
-bool gCollision = true;  // Control collision
-
-
 int main()
-{	
-	sf::RenderWindow window(sf::VideoMode(gScreenWidth, gScreenHeight), "Circles");  // Initialise window
+{
+	sf::RenderWindow window(sf::VideoMode(gWidth, gHeight), "Circles");  // Initialise window
 	sf::CircleShape circleShape(0);  // Load circles class
 	sf::Font basicFont;  // Load font class
-	if (!basicFont.loadFromFile("basic.ttf")) {  // Load font
+	if (!basicFont.loadFromFile("basic.ttf"))  // Load custom font
 		return 0;
-	}
-	sf::Text text25("This is a test", basicFont, 25);  // Create text instance of basicFont, size 25
-	text25.setColor({ 255, 255, 255, 255 });  // Set font colour
-	text25.setPosition(gScreenWidth / 2, gScreenHeight / 2);  // Set font position
 
 	srand(time(NULL));  // Random seed set to time
+
+	EInput lastInput{ EInput::eNone };  // Make enum for inputs
 
 	int numCircles = 20; // Number of circles
 	vector<Circle> Circles;  // Create empty vector of circles
 	Circles.resize(numCircles);
 	for (int i = 0; i < Circles.size(); i++)  // Fill vector with circles
 		Circles[i] = Circle();
-	
 
-	while(window.isOpen()) {
-		sleep_for(milliseconds(gTimeDelayMS));  // Window FPS
+	sf::Color colWhite({ 255, 255, 255, 255 });
+	sf::Color colGrey({ 180, 180, 180, 255 });
+	// Controls title
+	sf::Text txtControlTitle("Controls:", basicFont);  // Create text instance of basicFont, size 25
+	txtControlTitle.setColor(colWhite);  // Set font colour
+	txtControlTitle.setPosition(0, 0);  // Set font position
+	// Controls
+	sf::Text txtControls("Increase: [LMB]\nDecrease: [RMB]\nToggle collision: [MMB]\nSpeed: [MWheel]", basicFont, 20);
+	txtControls.setColor(colGrey);
+	txtControls.setPosition(0, 35);
+	// Stats title
+	sf::Text txtStatsTitle("Stats:", basicFont);
+	txtStatsTitle.setColor(colWhite);
+	txtStatsTitle.setPosition(0, 150);
+	// Speed
+	sf::Text txtSpeed("Speed: " + to_string(10 - gFps), basicFont, 20);
+	txtSpeed.setColor(colGrey);
+	txtSpeed.setPosition(0, 185);
+	// NumCircles
+	sf::Text txtNumCircles("Circles: " + to_string(numCircles), basicFont, 20);
+	txtNumCircles.setColor(colGrey);
+	txtNumCircles.setPosition(0, 210);
+	// Collision
+	sf::Text txtCollision(gCollision ? "Collision: On" : "Collision: Off", basicFont, 20);
+	txtCollision.setColor(colGrey);
+	txtCollision.setPosition(0, 235);
+
+	while(window.isOpen()) {  // Main loop
+		sleep_for(milliseconds(gFps));  // Window FPS
 		window.clear();  // Clear window between frames
 
 		sf::Event event;  // Window events
@@ -49,39 +67,66 @@ int main()
 			case sf::Event::Closed:  // If window close
 				window.close();  // Exit window
 				break;
+			case sf::Event::MouseWheelScrolled:  // Mouse scroll
+				if (gFps > 1 || event.mouseWheelScroll.delta < 0) {
+					gFps -= event.mouseWheelScroll.delta;
+					txtSpeed.setString("Speed: " + to_string(10 - gFps));
+				}
 			default:  // Pass
 				break;
 			}
 		}
 
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && numCircles > 1) {  // Right click
-			numCircles -= 1;  // Remove circle
-			Circles.pop_back();
-			cout << "Removed a circle." << endl;
-		}
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {  // Middle click
-			gCollision = !gCollision;  // Toggle collision
-			cout << "Toggled collision." << endl;
-		}
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && numCircles < 200) {  // Left click
-			Circles.push_back(Circle());  // Add circle
-			numCircles += 1;
-			cout << "Added a new circle." << endl;
-		}
-
-		for (int i = 0; i < numCircles; i++) {  // For each circle
-			Circles[i].Move();  // Move circles
-
-			if (gCollision) {  // Collision between circles
-				for (int j = i + 1; j < numCircles; j++)
-					Collide(Circles[i], Circles[j]);
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {  // Right click
+			if (numCircles > 1) {
+				lastInput = EInput::eRmb;
+				numCircles -= 1;  // Remove circle
+				Circles.pop_back();
+				txtNumCircles.setString("Circles: " + to_string(numCircles));  // Update amount of circles
+				cout << "Removed a circle." << endl;
 			}
 			
-			Circles[i].Draw(window);  // Draw circles
+		}
+		else if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {  // Middle click
+			if (lastInput != EInput::eMmb) {
+				lastInput = EInput::eMmb;  // Update last key
+				gCollision = !gCollision;  // Toggle collision
+				txtCollision.setString(gCollision ? "Collision: On" : "Collision: Off");
+				cout << "Toggled collision." << endl;
+			}
+		}
+		else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {  // Left click
+			if (numCircles < 200) {
+				lastInput = EInput::eLmb;
+				Circles.push_back(Circle());  // Add circle
+				numCircles += 1;
+				txtNumCircles.setString("Circles: " + to_string(numCircles));  // Update amount of circles
+				cout << "Added a new circle." << endl;
+			}
+		}
+		else  // Default last key to none
+			lastInput = EInput::eNone;
+
+
+
+		for (int circA = 0; circA < numCircles; circA++) {  // For each circle
+			Circles[circA].Move();  // Move circles
+
+			if (gCollision) {  // Collision between circles
+				for (int circB = circA + 1; circB < numCircles; circB++)
+					Collide(Circles[circA], Circles[circB]);
+			}
+			
+			Circles[circA].Draw(window);  // Draw circles
 		}
 
-		text25.setString(("Number of circles: " + numCircles));  // Update amount of circles
-		window.draw(text25);  // Draw text to window
+		window.draw(txtControlTitle);  // Draw text to window
+		window.draw(txtControls);
+		window.draw(txtStatsTitle);
+		window.draw(txtSpeed);
+		window.draw(txtNumCircles);
+		window.draw(txtCollision);
+		
 
 		window.display();  // Display window
 	}
