@@ -63,18 +63,18 @@ void Circle::Draw(sf::RenderWindow& window) {  // Circle draw
 }
 
 void Collide(Circle& a, Circle& b) {  // Collision between circles
-	F_Pos dist;
+	F_Pos dist;  // Float position
 	dist.x = a.getPos().x - b.getPos().x;
 	dist.y = a.getPos().y - b.getPos().y;
 	float totalDist = dist.x * dist.x + dist.y * dist.y;  // Use pythagorus theorum
 
 	float collision = a.getSize() + b.getSize();
 	collision *= collision;  // Calculate collision^2 rather than sqrt(dist) as faster
-
-	if (totalDist < collision) {
-		Pos newDirA = { -a.getDir().x, -a.getDir().y };
-		Pos newDirB = { -b.getDir().x, -b.getDir().y };
-		a.setDir(newDirA);
-		b.setDir(newDirB);
+	if (totalDist < collision / 1.5)  // If circles are overlapping rather than colliding then skip
+		return;
+	else if (totalDist < collision) {  // If collided...
+		Pos tempDir{ a.getDir().x, a.getDir().y };  // Exchange directions to simulate elastic collision
+		a.setDir(b.getDir());
+		b.setDir(tempDir);
 	}
 }
