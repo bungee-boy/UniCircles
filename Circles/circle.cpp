@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <stdlib.h>
+#include <iostream>
 #include "circle.h"
 
 using namespace std;
@@ -14,6 +15,11 @@ Circle::Circle() {  // Circle constructor
 	dir.x = rand() % 8 + 1;
 	dir.y = rand() % 8 + 1;
 	size = rand() % 15 + 10;
+	cout << "Created circle" << endl;
+}
+
+Circle::~Circle() {  // Circle deconstructor
+	cout << "Removed circle" << endl;
 }
 
 Pos Circle::getPos() { return pos; }

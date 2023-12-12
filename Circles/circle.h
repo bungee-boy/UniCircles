@@ -15,6 +15,7 @@ struct Colour {
 class Circle {
 public:
 	Circle();
+	~Circle();
 	Pos getPos();
 	void setPos(Pos newPos);
 	Pos getDir();

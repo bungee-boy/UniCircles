@@ -81,9 +81,9 @@ int main()
 			if (numCircles > 1) {
 				lastInput = EInput::eRmb;
 				numCircles -= 1;  // Remove circle
+				delete Circles[numCircles];
 				Circles.pop_back();
 				txtNumCircles.setString("Circles: " + to_string(numCircles));  // Update amount of circles
-				cout << "Removed a circle." << endl;
 			}
 			
 		}
@@ -101,13 +101,10 @@ int main()
 				Circles.push_back(new Circle());  // Add circle using pointers
 				numCircles += 1;
 				txtNumCircles.setString("Circles: " + to_string(numCircles));  // Update amount of circles
-				cout << "Added a new circle." << endl;
 			}
 		}
 		else  // Default last key to none
 			lastInput = EInput::eNone;
-
-
 
 		for (int circA = 0; circA < numCircles; circA++) {  // For each circle
 			(*Circles[circA]).Move();  // Move circles (dereference first)
@@ -127,7 +124,6 @@ int main()
 		window.draw(txtNumCircles);
 		window.draw(txtCollision);
 		
-
 		window.display();  // Display window
 	}
 
