@@ -96,12 +96,12 @@ int main()
 			}
 		}
 		else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {  // Left click
-			if (numCircles < 200) {
-				lastInput = EInput::eLmb;
-				Circles.push_back(Circle());  // Add circle
-				numCircles += 1;
-				txtNumCircles.setString("Circles: " + to_string(numCircles));  // Update amount of circles
-				cout << "Added a new circle." << endl;
+			if (numCircles < 300) {
+			lastInput = EInput::eLmb;
+			Circles.push_back(Circle());  // Add circle
+			numCircles += 1;
+			txtNumCircles.setString("Circles: " + to_string(numCircles));  // Update amount of circles
+			cout << "Added a new circle." << endl;
 			}
 		}
 		else  // Default last key to none
