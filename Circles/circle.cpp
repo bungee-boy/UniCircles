@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <stdlib.h>
+#include <iostream>
+#include <cmath>
 #include "circle.h"
 
 using namespace std;
@@ -13,7 +15,12 @@ Circle::Circle() {  // Circle constructor
 	pos.y = rand() % gHeight - 22 + 1;
 	dir.x = rand() % 8 + 1;
 	dir.y = rand() % 8 + 1;
-	size = rand() % 15 + 10;
+	size = rand() % 20 + 15;  // Random 15 - 20
+	cout << "Created circle" << endl;
+}
+
+Circle::~Circle() {  // Circle deconstructor
+	cout << "Removed circle" << endl;
 }
 
 Pos Circle::getPos() { return pos; }
@@ -57,18 +64,19 @@ void Circle::Draw(sf::RenderWindow& window) {  // Circle draw
 }
 
 void Collide(Circle& a, Circle& b) {  // Collision between circles
-	F_Pos dist;
+	F_Pos dist;  // Float position
 	dist.x = a.getPos().x - b.getPos().x;
 	dist.y = a.getPos().y - b.getPos().y;
 	float totalDist = dist.x * dist.x + dist.y * dist.y;  // Use pythagorus theorum
-
-	float collision = a.getSize() + b.getSize();
-	collision *= collision;  // Calculate collision^2 rather than sqrt(dist) as faster
-
-	if (totalDist < collision) {
-		Pos newDirA = { -a.getDir().x, -a.getDir().y };
-		Pos newDirB = { -b.getDir().x, -b.getDir().y };
-		a.setDir(newDirA);
-		b.setDir(newDirB);
+	if (totalDist > 10000) {
+		return;
+	}
+	float collision = a.getSize() * a.getSize() + b.getSize() * b.getSize();  // Calculate collision ^ 2 rather than sqrt(dist) as faster
+	// cout << "Size: " << a.getSize() << " " << b.getSize() << " Dist: " << totalDist << " Coll: " << collision << endl;
+	if (totalDist <= collision) {  // If collided...
+		cout << endl;
+		Pos tempDir{ a.getDir().x, a.getDir().y };  // Exchange directions to simulate elastic collision
+		a.setDir(b.getDir());
+		b.setDir(tempDir);
 	}
 }
