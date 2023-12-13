@@ -9,8 +9,6 @@
 #include "main.h"
 
 using namespace std;  // Include namespaces
-using namespace std::this_thread;
-using namespace std::chrono;
 
 int main()
 {
@@ -58,7 +56,7 @@ int main()
 	txtCollision.setPosition(0, 235);
 
 	while(window.isOpen()) {  // Main loop
-		sleep_for(milliseconds(gFps));  // Window FPS
+		this_thread::sleep_for(chrono::milliseconds(gFps));  // Window FPS
 		window.clear();  // Clear window between frames
 
 		sf::Event event;  // Window events
@@ -66,7 +64,7 @@ int main()
 			switch (event.type) {
 			case sf::Event::Closed:  // If window close
 				window.close();  // Exit window
-				break;
+				exit(0);  // Stop code
 			case sf::Event::MouseWheelScrolled:  // Mouse scroll
 				if (gFps > 1 || event.mouseWheelScroll.delta < 0) {
 					gFps -= event.mouseWheelScroll.delta;
