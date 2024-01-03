@@ -14,16 +14,16 @@ struct Colour {
 
 class Circle {
 public:
-	Circle();
-	~Circle();
-	Pos getPos();
-	void setPos(Pos newPos);
-	Pos getDir();
-	void setDir(Pos newDir);
-	int getSize();
-	void setSize(int newSize);
-	void Move();
-	void Draw(sf::RenderWindow& window);
+	Circle();  // Constructor
+	~Circle();  // Destructor
+	Pos getPos() { return pos; }  // Get & Set functions
+	void setPos(Pos newPos) { pos = newPos; }
+	Pos getDir() { return dir; }
+	void setDir(Pos newDir) { dir = newDir; }
+	int getSize() { return size; }
+	void setSize(int newSize) { size = newSize; }
+	void Move();  // Updates position
+	void Draw(sf::RenderWindow& window);  // Draws the circle to given window
 private:
 	Pos pos;
 	Pos dir;
@@ -31,4 +31,4 @@ private:
 	Colour colour;
 };
 
-void Collide(Circle& a, Circle& b);
+void Collide(Circle& a, Circle& b);  // Calculates collisions between 2 circles

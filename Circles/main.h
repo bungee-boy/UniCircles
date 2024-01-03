@@ -5,11 +5,11 @@ int gHeight{ 990 };
 int gFps{ 10 };  // Delay to slow things down
 bool gCollision = true;  // Control collision
 
-enum class EInput {
+enum class EInput {  // Enum for mouse input
 	eNone,
 	eLmb,
 	eRmb,
 	eMmb
 };
 
-int main();
+int main();  // Main function

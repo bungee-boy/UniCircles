@@ -23,43 +23,34 @@ Circle::~Circle() {  // Circle deconstructor
 	cout << "Removed circle" << endl;
 }
 
-Pos Circle::getPos() { return pos; }
-void Circle::setPos(Pos newPos) { pos = newPos; }
-
-Pos Circle::getDir() { return dir; }
-void Circle::setDir(Pos newDir) { dir = newDir; }
-
-int Circle::getSize() { return size; }
-void Circle::setSize(int newSize) { size = newSize; }
-
 void Circle::Move() {  // Circle move
 	pos.x += dir.x;
 	pos.y += dir.y;
-
-	if (pos.x <= 0) {  // Bounce off edges of the screen
+	// Bounce off edges of the screen
+	if (pos.x <= 0) {  // Left
 		pos.x = 0;
 		dir.x = -dir.x;
 	}
-	else if (pos.x >= gWidth - (size * 2)) {
+	else if (pos.x >= gWidth - (size * 2)) {  // Right
 		pos.x = gWidth - (size * 2);
 		dir.x = -dir.x;
 	}
 
-	if (pos.y <= 0) {
+	if (pos.y <= 0) {  // Top
 		pos.y = 0;
 		dir.y = -dir.y;
 	}
-	else if (pos.y >= gHeight - (size * 2)) {
+	else if (pos.y >= gHeight - (size * 2)) {  // Bottom
 		pos.y = gHeight - (size * 2);
 		dir.y = -dir.y;
 	}
 }
 
-void Circle::Draw(sf::RenderWindow& window) {  // Circle draw
+void Circle::Draw(sf::RenderWindow& window) {  // Draw circle
 	sf::CircleShape circle;  // Create circle
 	circle.setRadius(size);  // Set radius
 	circle.setPosition(pos.x, pos.y);  // Set position
-	circle.setFillColor({ colour.r, colour.g, colour.b, colour.a });
+	circle.setFillColor({ colour.r, colour.g, colour.b, colour.a });  // Set colour
 	window.draw(circle);  // Draw to screen
 }
 
@@ -68,13 +59,12 @@ void Collide(Circle& a, Circle& b) {  // Collision between circles
 	dist.x = a.getPos().x - b.getPos().x;
 	dist.y = a.getPos().y - b.getPos().y;
 	float totalDist = dist.x * dist.x + dist.y * dist.y;  // Use pythagorus theorum
-	if (totalDist > 10000) {
+	if (totalDist > 10000) { // Do not consider collision if circles are > 10,000 away from each other (optimisation)
 		return;
 	}
-	float collision = a.getSize() * a.getSize() + b.getSize() * b.getSize();  // Calculate collision ^ 2 rather than sqrt(dist) as faster
-	// cout << "Size: " << a.getSize() << " " << b.getSize() << " Dist: " << totalDist << " Coll: " << collision << endl;
+	float collision = a.getSize() * a.getSize() + b.getSize() * b.getSize();  // Calculate collision ^ 2 rather than sqrt(dist) as faster (optimisation)
+	// cout << "Size: " << a.getSize() << " " << b.getSize() << " Dist: " << totalDist << " Coll: " << collision << endl;  // Debug output
 	if (totalDist <= collision) {  // If collided...
-		cout << endl;
 		Pos tempDir{ a.getDir().x, a.getDir().y };  // Exchange directions to simulate elastic collision
 		a.setDir(b.getDir());
 		b.setDir(tempDir);

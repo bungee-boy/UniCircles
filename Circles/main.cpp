@@ -5,6 +5,7 @@
 #include <thread>
 #include <vector>
 #include <string>
+
 #include "circle.h"
 #include "main.h"
 
@@ -94,12 +95,10 @@ int main()
 			}
 		}
 		else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {  // Left click
-			if (numCircles < 200) {
-				lastInput = EInput::eLmb;
-				Circles.push_back(new Circle());  // Add circle using pointers
-				numCircles += 1;
-				txtNumCircles.setString("Circles: " + to_string(numCircles));  // Update amount of circles
-			}
+			lastInput = EInput::eLmb;
+			Circles.push_back(new Circle());  // Add circle using pointers
+			numCircles += 1;
+			txtNumCircles.setString("Circles: " + to_string(numCircles));  // Update amount of circles
 		}
 		else  // Default last key to none
 			lastInput = EInput::eNone;
@@ -115,7 +114,7 @@ int main()
 			(*Circles[circA]).Draw(window);  // Draw circles (dereference first)
 		}
 
-		window.draw(txtControlTitle);  // Draw text to window
+		window.draw(txtControlTitle);  // Draw all text to window
 		window.draw(txtControls);
 		window.draw(txtStatsTitle);
 		window.draw(txtSpeed);
@@ -125,5 +124,5 @@ int main()
 		window.display();  // Display window
 	}
 
-	return 0;
+	return 0;  // Exit code
 }
